@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, View, ScrollView, Button, Alert } from 'react-native';
+import { StyleSheet, Text, TextInput, View, Button, Alert, ScrollView } from 'react-native';
 import axios from 'axios';
 
 const App = () => {
+  const BASE_URL = "https://swapi.dev/api/";
   const [request, setRequest] = useState('');
-  const [data, setData] = useState(null); // Initialize data as null
+  const [data, setData] = useState(null);
 
   const fetchData = async () => {
     console.log("Making GET Request");
     try {
-      // GET Request
-      const response = await axios.get(request);
+      // GET Request with the concatenated URL
+      const response = await axios.get(BASE_URL + request.toLowerCase());
       console.log(response);
       setData(response.data);
     } catch (error) {
@@ -20,30 +21,38 @@ const App = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <TextInput
-        style={{ height: 40, marginBottom: 10 }}
-        placeholder="Type something!"
-        onChangeText={newText => setRequest(newText)}
-      />
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <View style={styles.container}>
+        <TextInput
+          style={{ height: 40, marginBottom: 10 }}
+          placeholder="Type something!"
+          onChangeText={newText => setRequest(newText)}
+        />
 
-      <Button
-        title="Request"
-        onPress={fetchData}
-      />
+        <Button
+          title="Request"
+          onPress={fetchData}
+        />
 
-      {data && (
-        <ScrollView style={styles.resultContainer}>
-          <Text style={styles.resultText}>{JSON.stringify(data, null, 2)}</Text>
-        </ScrollView>
-      )}
-    </View>
+        {data && (
+          <ScrollView style={styles.resultContainer}>
+            <Text style={styles.resultText}>Name: {data.name}</Text>
+            <Text style={styles.resultText}>Birth Year: {data.birth_year}</Text>
+          </ScrollView>
+        )}
+      </View>
+    </ScrollView>
   );
 };
 
 export default App;
 
 const styles = StyleSheet.create({
+  scrollContainer: {
+    flexGrow: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
@@ -60,7 +69,17 @@ const styles = StyleSheet.create({
     maxHeight: 200,
     overflow: 'scroll',
   },
-  resultText: {
+  section: {
+    marginBottom: 15,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  sectionContent: {
     fontSize: 16,
   },
 });
+
+
